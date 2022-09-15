@@ -1,3 +1,5 @@
+using MongoDB.Bson;
+
 namespace ET.Server
 {
     public static class TransferHelper
@@ -9,12 +11,12 @@ namespace ET.Server
             MessageHelper.SendToClient(unit, m2CStartSceneChange);
             
             M2M_UnitTransferRequest request = new M2M_UnitTransferRequest();
-            request.Unit = unit;
+            request.Unit = unit.ToBson();
             foreach (Entity entity in unit.Components.Values)
             {
                 if (entity is ITransfer)
                 {
-                    request.Entitys.Add(entity);
+                    request.Entitys.Add(entity.ToBson());
                 }
             }
             // 删除Mailbox,让发给Unit的ActorLocation消息重发

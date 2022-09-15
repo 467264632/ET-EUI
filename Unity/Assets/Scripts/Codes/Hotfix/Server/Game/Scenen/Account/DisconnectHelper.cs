@@ -51,7 +51,7 @@ namespace ET.Server
                             var chat2GRequestExitChat = (Chat2G_RequestExitChat)await MessageHelper.CallActor(player.ChatInfoInstanceId,new G2Chat_RequestExitChat());
 
                             //通知移除账号角色登录信息
-                            long LoginCenterConfigSceneId = StartSceneConfigCategory.Instance.LoginCenterConfig.InstanceId;
+                            long LoginCenterConfigSceneId = GetSceneHelper.GetLoginCenter().InstanceId;
                             var L2G_RemoveLoginRecord     =   (L2G_RemoveLoginRecord) await MessageHelper.CallActor(LoginCenterConfigSceneId, new G2L_RemoveLoginRecord()
                                                             {
                                                                 AccountId = player.AccountId,ServerId = player.DomainZone()

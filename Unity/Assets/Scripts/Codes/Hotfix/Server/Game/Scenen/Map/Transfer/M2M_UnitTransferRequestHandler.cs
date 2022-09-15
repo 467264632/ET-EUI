@@ -15,11 +15,12 @@ namespace ET.Server
             unitComponent.AddChild(unit);
             unitComponent.Add(unit);
 			
-            // unit.AddComponent<UnitDBSaveComponent>();
+            unit.AddComponent<UnitDBSaveComponent>();
             
-            foreach (Entity entity in request.Entitys)
+            foreach (byte[] bytes in request.Entitys)
             {
-                unit.AddComponent(entity);
+	            Entity entity = MongoHelper.FromBson<Entity>(bytes);
+	            unit.AddComponent(entity);
             }
 			
             // unit.AddComponent<MoveComponent>();

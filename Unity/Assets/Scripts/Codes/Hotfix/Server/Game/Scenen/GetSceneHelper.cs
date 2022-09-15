@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ET.Server
 {
-	public static class RealmGateAddressHelper
+	public static class GetSceneHelper
 	{
 		public static StartSceneConfig GetGate(int zone)
 		{
@@ -25,5 +25,15 @@ namespace ET.Server
 			
 			return zoneRealm[n];
 		}
+		public static StartSceneConfig GetLoginCenter()
+		{
+			return StartSceneConfigCategory.Instance.LoginCenters[0];
+		}
+		public static StartSceneConfig GetUnitCache(long unitId)
+		{
+			int zone = UnitIdStruct.GetUnitZone(unitId);
+			return StartSceneConfigCategory.Instance.UnitCaches[zone];
+		}
+		
 	}
 }

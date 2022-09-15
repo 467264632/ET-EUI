@@ -21,7 +21,12 @@ namespace ET
         public List<StartSceneConfig> Robots = new List<StartSceneConfig>();
         
         public List<StartSceneConfig> Accounts = new List<StartSceneConfig>();
-
+        public List<StartSceneConfig> LoginCenters = new List<StartSceneConfig>();
+        public Dictionary<int, StartSceneConfig> UnitCaches = new Dictionary<int, StartSceneConfig>();
+        public List<StartSceneConfig> Ranks = new List<StartSceneConfig>();
+        public List<StartSceneConfig> ChatInfos = new List<StartSceneConfig>();
+        
+        
         public StartSceneConfig BenchmarkServer;
         
         public List<StartSceneConfig> GetByProcess(int process)
@@ -68,6 +73,18 @@ namespace ET
                         break;
                     case SceneType.Account:
                         this.Accounts.Add(startSceneConfig);
+                        break;
+                    case SceneType.LoginCenter:
+                        this.LoginCenters.Add(startSceneConfig);
+                        break;
+                    case SceneType.UnitCache:
+                        this.UnitCaches.Add(startSceneConfig.Zone, startSceneConfig);
+                        break;
+                    case SceneType.Rank:
+                        this.Ranks.Add(startSceneConfig);
+                        break;
+                    case SceneType.ChatInfo:
+                        this.ChatInfos.Add(startSceneConfig);
                         break;
                 }
             }

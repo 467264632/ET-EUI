@@ -16,7 +16,7 @@ namespace ET.Server
             Other2UnitCache_AddOrUpdateUnit message = new Other2UnitCache_AddOrUpdateUnit() { UnitId = self.Id, };
             message.EntityTypes.Add(typeof (T).FullName);
             message.EntityBytes.Add(MongoHelper.ToBson(self));
-            await MessageHelper.CallActor(StartSceneConfigCategory.Instance.GetUnitCacheConfig(self.Id).InstanceId, message);
+            await MessageHelper.CallActor(GetSceneHelper.GetUnitCache(self.Id).InstanceId, message);
         }
         
         /// <summary>
@@ -27,7 +27,7 @@ namespace ET.Server
         /// <returns></returns>
         public static async ETTask<Unit> GetUnitCache(Scene scene, long unitId)
         {
-            long instanceId = StartSceneConfigCategory.Instance.GetUnitCacheConfig(unitId).InstanceId;
+            long instanceId = GetSceneHelper.GetUnitCache(unitId).InstanceId;
             Other2UnitCache_GetUnit message = new Other2UnitCache_GetUnit() { UnitId = unitId };
             UnitCache2Other_GetUnit queryUnit = (UnitCache2Other_GetUnit) await MessageHelper.CallActor(instanceId,message);
             if (queryUnit.Error != ErrorCode.ERR_Success || queryUnit.EntityList.Count <= 0)
@@ -63,7 +63,7 @@ namespace ET.Server
         {
             Other2UnitCache_GetUnit message = new Other2UnitCache_GetUnit() { UnitId = unitId };
             message.ComponentNameList.Add(typeof (T).Name);
-            long instanceId = StartSceneConfigCategory.Instance.GetUnitCacheConfig(unitId).InstanceId;
+            long instanceId = GetSceneHelper.GetUnitCache(unitId).InstanceId;
             UnitCache2Other_GetUnit queryUnit = (UnitCache2Other_GetUnit) await MessageHelper.CallActor(instanceId, message);
             if (queryUnit.Error == ErrorCode.ERR_Success && queryUnit.EntityList.Count > 0)
             {
@@ -79,7 +79,7 @@ namespace ET.Server
         public static async ETTask DeleteUnitCache(long unitId)
         {
             Other2UnitCache_DeleteUnit message = new Other2UnitCache_DeleteUnit() { UnitId = unitId };
-            long instanceId = StartSceneConfigCategory.Instance.GetUnitCacheConfig(unitId).InstanceId;
+            long instanceId = GetSceneHelper.GetUnitCache(unitId).InstanceId;
             await MessageHelper.CallActor(instanceId, message);
         }
         
@@ -104,7 +104,7 @@ namespace ET.Server
                 message.EntityTypes.Add(key.FullName);
                 message.EntityBytes.Add(MongoHelper.ToBson(entity));
             }
-            MessageHelper.CallActor(StartSceneConfigCategory.Instance.GetUnitCacheConfig(unit.Id).InstanceId, message).Coroutine();
+            MessageHelper.CallActor(GetSceneHelper.GetUnitCache(unit.Id).InstanceId, message).Coroutine();
         }
     }
 }

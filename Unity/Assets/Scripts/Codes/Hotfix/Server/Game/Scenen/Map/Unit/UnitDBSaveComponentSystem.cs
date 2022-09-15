@@ -102,7 +102,7 @@ namespace ET.Server
                 message.EntityBytes.Add(MongoHelper.ToBson(entity));
             }
             self.EntityChangeTypeSet.Clear();
-            MessageHelper.CallActor(StartSceneConfigCategory.Instance.GetUnitCacheConfig(unit.Id).InstanceId, message).Coroutine();
+            MessageHelper.CallActor(GetSceneHelper.GetUnitCache(unit.Id).InstanceId, message).Coroutine();
         }
     }
 }
