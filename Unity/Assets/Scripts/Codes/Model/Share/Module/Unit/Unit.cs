@@ -6,19 +6,18 @@ namespace ET
 {
     [ChildOf(typeof(UnitComponent))]
     [DebuggerDisplay("ViewName,nq")]
-    public class Unit: Entity, IAwake<int>
+    public class Unit: Entity, IAwake<int>,IAddComponent,IGetComponent
     {
         public int ConfigId { get; set; } //配置表id
 
         [BsonIgnore]
         public UnitConfig Config => UnitConfigCategory.Instance.Get(this.ConfigId);
 
+        [BsonIgnore]
         public UnitType Type => (UnitType)UnitConfigCategory.Instance.Get(this.ConfigId).Type;
-
-        [BsonElement]
+        
         private Vector3 position; //坐标
 
-        [BsonIgnore]
         public Vector3 Position
         {
             get => this.position;
@@ -37,10 +36,8 @@ namespace ET
             set => this.Rotation = Quaternion.LookRotation(value, Vector3.up);
         }
         
-        [BsonElement]
         private Quaternion rotation;
         
-        [BsonIgnore]
         public Quaternion Rotation
         {
             get => this.rotation;

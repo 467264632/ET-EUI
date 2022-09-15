@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 
 namespace ET.Client
 {
@@ -26,7 +25,7 @@ namespace ET.Client
 
         private static async ETTask GetAllRouter(this RouterAddressComponent self)
         {
-            string url = $"http://{self.RouterManagerHost}:{self.RouterManagerPort}/get_router?v={RandomGenerator.Instance.RandUInt32()}";
+            string url = $"http://{self.RouterManagerHost}:{self.RouterManagerPort}/get_router?v={RandomGenerator.RandUInt32()}";
             Log.Debug($"start get router info: {url}");
             string routerInfo = await HttpClientHelper.Get(url);
             Log.Debug($"recv router info: {routerInfo}");
@@ -35,7 +34,7 @@ namespace ET.Client
             Log.Debug($"start get router info finish: {JsonHelper.ToJson(httpGetRouterResponse)}");
             
             // 打乱顺序
-            RandomGenerator.Instance.BreakRank(self.Info.Routers);
+            RandomGenerator.BreakRank(self.Info.Routers);
             
             self.WaitTenMinGetAllRouter().Coroutine();
         }
@@ -69,6 +68,19 @@ namespace ET.Client
         }
         
         public static IPEndPoint GetRealmAddress(this RouterAddressComponent self, string account)
+        {
+            int v = account.Mode(self.Info.Realms.Count);
+            string address = self.Info.Realms[v];
+            string[] ss = address.Split(':');
+            IPAddress ipAddress = IPAddress.Parse(ss[0]);
+            //if (self.IPAddress.AddressFamily == AddressFamily.InterNetworkV6)
+            //{ 
+            //    ipAddress = ipAddress.MapToIPv6();
+            //}
+            return new IPEndPoint(ipAddress, int.Parse(ss[1]));
+        }
+        
+        public static IPEndPoint GetAccountAddress(this RouterAddressComponent self, string account)
         {
             int v = account.Mode(self.Info.Realms.Count);
             string address = self.Info.Realms[v];

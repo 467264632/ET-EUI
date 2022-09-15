@@ -13,5 +13,14 @@
         public const int MoveTimer = 201;
         public const int AITimer = 202;
         public const int SessionAcceptTimeout = 203;
+        
+        public const int AccountSessionCheckOutTime = 204;
+        public const int PlayerOfflineOutTime = 205;
+        public const int NoticeUnitNumericTime = 206;
+        public const int SaveChangeDBData = 207;
+        public const int BattleRound = 208;
+        public const int MakeQueueOver = 209;
+        public const int MakeQueueUI = 210;
+        public const int RankUI = 211;
     }
 }
