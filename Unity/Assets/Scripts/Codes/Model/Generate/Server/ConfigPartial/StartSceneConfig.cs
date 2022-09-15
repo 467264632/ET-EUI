@@ -14,11 +14,13 @@ namespace ET
 
         public StartSceneConfig LocationConfig;
 
-        public List<StartSceneConfig> Realms = new List<StartSceneConfig>();
+        public MultiMap<int, StartSceneConfig> Realms = new MultiMap<int, StartSceneConfig>();
         
         public List<StartSceneConfig> Routers = new List<StartSceneConfig>();
         
         public List<StartSceneConfig> Robots = new List<StartSceneConfig>();
+        
+        public List<StartSceneConfig> Accounts = new List<StartSceneConfig>();
 
         public StartSceneConfig BenchmarkServer;
         
@@ -47,7 +49,7 @@ namespace ET
                 switch (startSceneConfig.Type)
                 {
                     case SceneType.Realm:
-                        this.Realms.Add(startSceneConfig);
+                        this.Realms.Add(startSceneConfig.Zone, startSceneConfig);
                         break;
                     case SceneType.Gate:
                         this.Gates.Add(startSceneConfig.Zone, startSceneConfig);
@@ -63,6 +65,9 @@ namespace ET
                         break;
                     case SceneType.BenchmarkServer:
                         this.BenchmarkServer = startSceneConfig;
+                        break;
+                    case SceneType.Account:
+                        this.Accounts.Add(startSceneConfig);
                         break;
                 }
             }

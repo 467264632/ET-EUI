@@ -298,24 +298,6 @@ namespace ET
 
 	}
 
-	[Message(InnerMessage.M2M_UnitTransferResponse)]
-	[ProtoContract]
-	public partial class M2M_UnitTransferResponse: Object, IActorResponse
-	{
-		[ProtoMember(1)]
-		public int RpcId { get; set; }
-
-		[ProtoMember(2)]
-		public int Error { get; set; }
-
-		[ProtoMember(3)]
-		public string Message { get; set; }
-
-		[ProtoMember(4)]
-		public long NewInstanceId { get; set; }
-
-	}
-
 	[Message(InnerMessage.G2M_SessionDisconnect)]
 	[ProtoContract]
 	public partial class G2M_SessionDisconnect: Object, IActorLocationMessage
@@ -359,6 +341,431 @@ namespace ET
 
 	}
 
+	[Message(InnerMessage.M2M_UnitTransferResponse)]
+	[ProtoContract]
+	public partial class M2M_UnitTransferResponse: Object, IActorResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+		[ProtoMember(4)]
+		public long NewInstanceId { get; set; }
+
+	}
+
+	[ResponseType(nameof(L2A_LoginAccountResponse))]
+	[Message(InnerMessage.A2L_LoginAccountRequest)]
+	[ProtoContract]
+	public partial class A2L_LoginAccountRequest: Object, IActorRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public long AccountId { get; set; }
+
+	}
+
+	[Message(InnerMessage.L2A_LoginAccountResponse)]
+	[ProtoContract]
+	public partial class L2A_LoginAccountResponse: Object, IActorResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+	}
+
+	[ResponseType(nameof(G2L_DisconnectGateUnit))]
+	[Message(InnerMessage.L2G_DisconnectGateUnit)]
+	[ProtoContract]
+	public partial class L2G_DisconnectGateUnit: Object, IActorRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public long AccountId { get; set; }
+
+	}
+
+	[Message(InnerMessage.G2L_DisconnectGateUnit)]
+	[ProtoContract]
+	public partial class G2L_DisconnectGateUnit: Object, IActorResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+	}
+
+	[ResponseType(nameof(R2A_GetRealmKey))]
+	[Message(InnerMessage.A2R_GetRealmKey)]
+	[ProtoContract]
+	public partial class A2R_GetRealmKey: Object, IActorRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public long AccountId { get; set; }
+
+	}
+
+	[Message(InnerMessage.R2A_GetRealmKey)]
+	[ProtoContract]
+	public partial class R2A_GetRealmKey: Object, IActorResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+		[ProtoMember(1)]
+		public string RealmKey { get; set; }
+
+	}
+
+	[ResponseType(nameof(G2R_GetLoginGateKey))]
+	[Message(InnerMessage.R2G_GetLoginGateKey)]
+	[ProtoContract]
+	public partial class R2G_GetLoginGateKey: Object, IActorRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public long AccountId { get; set; }
+
+	}
+
+	[Message(InnerMessage.G2R_GetLoginGateKey)]
+	[ProtoContract]
+	public partial class G2R_GetLoginGateKey: Object, IActorResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+		[ProtoMember(1)]
+		public string GateSessionKey { get; set; }
+
+	}
+
+	[ResponseType(nameof(L2G_AddLoginRecord))]
+	[Message(InnerMessage.G2L_AddLoginRecord)]
+	[ProtoContract]
+	public partial class G2L_AddLoginRecord: Object, IActorRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public long AccountId { get; set; }
+
+		[ProtoMember(2)]
+		public int ServerId { get; set; }
+
+	}
+
+	[Message(InnerMessage.L2G_AddLoginRecord)]
+	[ProtoContract]
+	public partial class L2G_AddLoginRecord: Object, IActorResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+	}
+
+	[ResponseType(nameof(M2G_RequestEnterGameState))]
+	[Message(InnerMessage.G2M_RequestEnterGameState)]
+	[ProtoContract]
+	public partial class G2M_RequestEnterGameState: Object, IActorLocationRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+	}
+
+	[Message(InnerMessage.M2G_RequestEnterGameState)]
+	[ProtoContract]
+	public partial class M2G_RequestEnterGameState: Object, IActorLocationResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+	}
+
+	[ResponseType(nameof(M2G_RequestExitGame))]
+	[Message(InnerMessage.G2M_RequestExitGame)]
+	[ProtoContract]
+	public partial class G2M_RequestExitGame: Object, IActorLocationRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+	}
+
+	[Message(InnerMessage.M2G_RequestExitGame)]
+	[ProtoContract]
+	public partial class M2G_RequestExitGame: Object, IActorLocationResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+	}
+
+	[ResponseType(nameof(L2G_RemoveLoginRecord))]
+	[Message(InnerMessage.G2L_RemoveLoginRecord)]
+	[ProtoContract]
+	public partial class G2L_RemoveLoginRecord: Object, IActorRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public long AccountId { get; set; }
+
+		[ProtoMember(2)]
+		public int ServerId { get; set; }
+
+	}
+
+	[Message(InnerMessage.L2G_RemoveLoginRecord)]
+	[ProtoContract]
+	public partial class L2G_RemoveLoginRecord: Object, IActorResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+	}
+
+//----------玩家缓存相关----------------
+//增加或者更新Unit缓存
+	[ResponseType(nameof(UnitCache2Other_AddOrUpdateUnit))]
+	[Message(InnerMessage.Other2UnitCache_AddOrUpdateUnit)]
+	[ProtoContract]
+	public partial class Other2UnitCache_AddOrUpdateUnit: Object, IActorRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public long UnitId { get; set; }
+
+		[ProtoMember(2)]
+		public List<string> EntityTypes = new List<string>();
+
+		[ProtoMember(3)]
+		public List<byte[]> EntityBytes = new List<byte[]>();
+
+	}
+
+	[Message(InnerMessage.UnitCache2Other_AddOrUpdateUnit)]
+	[ProtoContract]
+	public partial class UnitCache2Other_AddOrUpdateUnit: Object, IActorResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+	}
+
+//获取Unit缓存
+	[ResponseType(nameof(UnitCache2Other_GetUnit))]
+	[Message(InnerMessage.Other2UnitCache_GetUnit)]
+	[ProtoContract]
+	public partial class Other2UnitCache_GetUnit: Object, IActorRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public long UnitId { get; set; }
+
+		[ProtoMember(2)]
+		public List<string> ComponentNameList = new List<string>();
+
+	}
+
+	[Message(InnerMessage.UnitCache2Other_GetUnit)]
+	[ProtoContract]
+	public partial class UnitCache2Other_GetUnit: Object, IActorResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+		[ProtoMember(4)]
+		public List<Entity> EntityList = new List<Entity>();
+
+		[ProtoMember(5)]
+		public List<string> ComponentNameList = new List<string>();
+
+	}
+
+//删除Unit缓存
+	[ResponseType(nameof(UnitCache2Other_DeleteUnit))]
+	[Message(InnerMessage.Other2UnitCache_DeleteUnit)]
+	[ProtoContract]
+	public partial class Other2UnitCache_DeleteUnit: Object, IActorRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public long UnitId { get; set; }
+
+	}
+
+	[Message(InnerMessage.UnitCache2Other_DeleteUnit)]
+	[ProtoContract]
+	public partial class UnitCache2Other_DeleteUnit: Object, IActorResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+	}
+
+	[ResponseType(nameof(Chat2G_EnterChat))]
+	[Message(InnerMessage.G2Chat_EnterChat)]
+	[ProtoContract]
+	public partial class G2Chat_EnterChat: Object, IActorRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public string Name { get; set; }
+
+		[ProtoMember(2)]
+		public long UnitId { get; set; }
+
+		[ProtoMember(3)]
+		public long GateSessionActorId { get; set; }
+
+	}
+
+	[Message(InnerMessage.Chat2G_EnterChat)]
+	[ProtoContract]
+	public partial class Chat2G_EnterChat: Object, IActorResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+		[ProtoMember(1)]
+		public long ChatInfoUnitInstanceId { get; set; }
+
+	}
+
+	[ResponseType(nameof(Chat2G_RequestExitChat))]
+	[Message(InnerMessage.G2Chat_RequestExitChat)]
+	[ProtoContract]
+	public partial class G2Chat_RequestExitChat: Object, IActorRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+	}
+
+	[Message(InnerMessage.Chat2G_RequestExitChat)]
+	[ProtoContract]
+	public partial class Chat2G_RequestExitChat: Object, IActorResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+	}
+
+	[Message(InnerMessage.Map2Rank_AddOrUpdateRankInfo)]
+	[ProtoContract]
+	public partial class Map2Rank_AddOrUpdateRankInfo: Object, IActorMessage
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public RankInfo RankInfo { get; set; }
+
+	}
+
 	public static class InnerMessage
 	{
 		 public const ushort ObjectQueryRequest = 20002;
@@ -380,9 +787,36 @@ namespace ET
 		 public const ushort ObjectGetResponse = 20018;
 		 public const ushort R2G_GetLoginKey = 20019;
 		 public const ushort G2R_GetLoginKey = 20020;
-		 public const ushort M2M_UnitTransferResponse = 20021;
-		 public const ushort G2M_SessionDisconnect = 20022;
-		 public const ushort ObjectQueryResponse = 20023;
-		 public const ushort M2M_UnitTransferRequest = 20024;
+		 public const ushort G2M_SessionDisconnect = 20021;
+		 public const ushort ObjectQueryResponse = 20022;
+		 public const ushort M2M_UnitTransferRequest = 20023;
+		 public const ushort M2M_UnitTransferResponse = 20024;
+		 public const ushort A2L_LoginAccountRequest = 20025;
+		 public const ushort L2A_LoginAccountResponse = 20026;
+		 public const ushort L2G_DisconnectGateUnit = 20027;
+		 public const ushort G2L_DisconnectGateUnit = 20028;
+		 public const ushort A2R_GetRealmKey = 20029;
+		 public const ushort R2A_GetRealmKey = 20030;
+		 public const ushort R2G_GetLoginGateKey = 20031;
+		 public const ushort G2R_GetLoginGateKey = 20032;
+		 public const ushort G2L_AddLoginRecord = 20033;
+		 public const ushort L2G_AddLoginRecord = 20034;
+		 public const ushort G2M_RequestEnterGameState = 20035;
+		 public const ushort M2G_RequestEnterGameState = 20036;
+		 public const ushort G2M_RequestExitGame = 20037;
+		 public const ushort M2G_RequestExitGame = 20038;
+		 public const ushort G2L_RemoveLoginRecord = 20039;
+		 public const ushort L2G_RemoveLoginRecord = 20040;
+		 public const ushort Other2UnitCache_AddOrUpdateUnit = 20041;
+		 public const ushort UnitCache2Other_AddOrUpdateUnit = 20042;
+		 public const ushort Other2UnitCache_GetUnit = 20043;
+		 public const ushort UnitCache2Other_GetUnit = 20044;
+		 public const ushort Other2UnitCache_DeleteUnit = 20045;
+		 public const ushort UnitCache2Other_DeleteUnit = 20046;
+		 public const ushort G2Chat_EnterChat = 20047;
+		 public const ushort Chat2G_EnterChat = 20048;
+		 public const ushort G2Chat_RequestExitChat = 20049;
+		 public const ushort Chat2G_RequestExitChat = 20050;
+		 public const ushort Map2Rank_AddOrUpdateRankInfo = 20051;
 	}
 }

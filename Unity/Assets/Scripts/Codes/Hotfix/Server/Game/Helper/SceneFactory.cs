@@ -27,11 +27,11 @@ namespace ET.Server
                     scene.AddComponent<HttpComponent, string>($"http://{startSceneConfig.OuterIPPort}/");
                     break;
                 case SceneType.Realm:
-                    scene.AddComponent<NetKcpComponent, IPEndPoint, int>(startSceneConfig.InnerIPOutPort, SessionStreamCallbackId.SessionStreamDispatcherServerOuter);
+                    scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.InnerIPOutPort);
                     scene.AddComponent<TokenComponent>();
                     break;
                 case SceneType.Gate:
-                    scene.AddComponent<NetKcpComponent, IPEndPoint, int>(startSceneConfig.InnerIPOutPort, SessionStreamCallbackId.SessionStreamDispatcherServerOuter);
+                    scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.InnerIPOutPort);
                     scene.AddComponent<PlayerComponent>();
                     scene.AddComponent<GateSessionKeyComponent>();
                     break;
@@ -45,8 +45,15 @@ namespace ET.Server
                 case SceneType.Robot:
                     scene.AddComponent<RobotManagerComponent>();
                     break;
+                case SceneType.BenchmarkServer:
+                    scene.AddComponent<BenchmarkServerComponent>();
+                    scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.OuterIPPort);
+                    break;
+                case SceneType.BenchmarkClient:
+                    scene.AddComponent<BenchmarkClientComponent>();
+                    break;
                 case SceneType.Account:
-                    scene.AddComponent<NetKcpComponent, IPEndPoint, int>(startSceneConfig.InnerIPOutPort, SessionStreamCallbackId.SessionStreamDispatcherServerOuter);
+                    scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.InnerIPOutPort);
                     scene.AddComponent<TokenComponent>();
                     scene.AddComponent<AccountSessionsComponent>();
                     scene.AddComponent<ServerInfoManagerComponent>();
