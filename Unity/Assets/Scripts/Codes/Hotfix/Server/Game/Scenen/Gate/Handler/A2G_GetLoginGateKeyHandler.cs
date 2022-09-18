@@ -3,9 +3,9 @@ using System;
 namespace ET.Server
 {
     [ActorMessageHandler(SceneType.Gate)]
-    public class R2G_GetLoginGateKeyHandler : AMActorRpcHandler<Scene, R2G_GetLoginGateKey, G2R_GetLoginGateKey>
+    public class A2G_GetLoginGateKeyHandler : AMActorRpcHandler<Scene, A2G_GetLoginGateKey, G2A_GetLoginGateKey>
     {
-        protected override async ETTask Run(Scene scene, R2G_GetLoginGateKey request, G2R_GetLoginGateKey response, Action reply)
+        protected override async ETTask Run(Scene scene, A2G_GetLoginGateKey request, G2A_GetLoginGateKey response, Action reply)
         {
             if (scene.SceneType != SceneType.Gate)
             {
@@ -18,7 +18,7 @@ namespace ET.Server
             string key     =  RandomHelper.RandInt64().ToString() + TimeHelper.ServerNow().ToString();
             scene.GetComponent<GateSessionKeyComponent>().Remove(request.AccountId);
             scene.GetComponent<GateSessionKeyComponent>().Add(request.AccountId, key);
-            response.GateSessionKey = key;
+            response.GateKey = key;
             reply();
             await ETTask.CompletedTask;
         }

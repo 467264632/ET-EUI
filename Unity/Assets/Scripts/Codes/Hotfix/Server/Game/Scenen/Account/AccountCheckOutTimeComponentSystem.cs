@@ -13,7 +13,7 @@ namespace ET.Server
             }
             catch (Exception e)
             {
-                Log.Error(e.ToString());
+                Log.Error($"AccountCheckOutTimeComponent timer error: {self.Id}\n{e}");
             }
         }
     }
@@ -24,7 +24,7 @@ namespace ET.Server
         {
             self.AccountId = accountId;
             TimerComponent.Instance.Remove(ref self.Timer);
-            self.Timer = TimerComponent.Instance.NewOnceTimer(TimeHelper.ServerNow() + 600000, TimerCallbackId.AccountSessionCheckOutTime, self);
+            self.Timer = TimerComponent.Instance.NewOnceTimer(TimeHelper.ServerNow() + 60000, TimerCallbackId.AccountSessionCheckOutTime, self);
         }
     }
     
@@ -45,7 +45,7 @@ namespace ET.Server
             Session session = self.GetParent<Session>();
 
             long sessionInstanceId = session.DomainScene().GetComponent<AccountSessionsComponent>().Get(self.AccountId);
-            if (session.InstanceId == sessionInstanceId)
+            if (session!=null && session.InstanceId == sessionInstanceId)
             {
                 session.DomainScene().GetComponent<AccountSessionsComponent>().Remove(self.AccountId);
             }

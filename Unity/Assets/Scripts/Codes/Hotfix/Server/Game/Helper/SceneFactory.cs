@@ -56,6 +56,7 @@ namespace ET.Server
                     scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.InnerIPOutPort);
                     scene.AddComponent<TokenComponent>();
                     scene.AddComponent<AccountSessionsComponent>();
+                    scene.AddComponent<AccountSessionKeyComponent>();//C2R_GetAccountKey 记录账号被分配到哪个Account
                     scene.AddComponent<ServerInfoManagerComponent>();
                     break;
                 case SceneType.LoginCenter:

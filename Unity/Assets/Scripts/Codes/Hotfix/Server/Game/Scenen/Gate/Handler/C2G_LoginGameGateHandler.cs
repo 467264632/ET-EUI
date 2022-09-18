@@ -25,7 +25,7 @@ namespace ET.Server
 			}
 			
 			Scene scene = session.DomainScene();
-			string tokenKey = scene.GetComponent<GateSessionKeyComponent>().Get(request.Account);
+			string tokenKey = scene.GetComponent<GateSessionKeyComponent>().Get(request.AccountId);
 			if (tokenKey == null || !tokenKey.Equals(request.Key))
 			{
 				response.Error = ErrorCode.ERR_ConnectGateKeyError;
@@ -35,11 +35,11 @@ namespace ET.Server
 				return;
 			}
 			
-			scene.GetComponent<GateSessionKeyComponent>().Remove(request.Account);
+			scene.GetComponent<GateSessionKeyComponent>().Remove(request.AccountId);
 			
 			long instanceId = session.InstanceId;
 			using (session.AddComponent<SessionLockingComponent>())
-			using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.LoginGate, request.Account.GetHashCode()))
+			using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.LoginGate, request.AccountId.GetHashCode()))
 			{
 				if (instanceId != session.InstanceId)
 				{
@@ -49,7 +49,7 @@ namespace ET.Server
 				//通知登录中心服 记录本次登录的服务器Zone
 				StartSceneConfig loginCenterConfig = GetSceneHelper.GetLoginCenter();
 				L2G_AddLoginRecord l2ARoleLogin    = (L2G_AddLoginRecord) await MessageHelper.CallActor(loginCenterConfig.InstanceId, 
-																				new G2L_AddLoginRecord() { AccountId = request.Account, ServerId = scene.Zone});
+																				new G2L_AddLoginRecord() { AccountId = request.AccountId, ServerId = scene.Zone});
 				
 				if (l2ARoleLogin.Error != ErrorCode.ERR_Success)
 				{
@@ -67,12 +67,12 @@ namespace ET.Server
 				}
 				SessionStateComponent.State = SessionState.Normal;
 			
-				Player player =  scene.GetComponent<PlayerComponent>().Get(request.Account);
+				Player player =  scene.GetComponent<PlayerComponent>().Get(request.AccountId);
 				
 				if (player == null)
 				{           
 					// 添加一个新的GateUnit
-					player = scene.GetComponent<PlayerComponent>().AddChildWithId<Player,long,long>(request.RoleId,request.Account,request.RoleId);
+					player = scene.GetComponent<PlayerComponent>().AddChildWithId<Player,long,long>(request.RoleId,request.AccountId,request.RoleId);
 					player.PlayerState = PlayerState.Gate;
 					scene.GetComponent<PlayerComponent>().Add(player);
 					session.AddComponent<MailBoxComponent, MailboxType>(MailboxType.GateSession);
@@ -84,7 +84,7 @@ namespace ET.Server
 				
 				session.AddComponent<SessionPlayerComponent>().PlayerId = player.Id;
 				session.GetComponent<SessionPlayerComponent>().PlayerInstanceId = player.InstanceId;
-				session.GetComponent<SessionPlayerComponent>().AccountId = request.Account;
+				session.GetComponent<SessionPlayerComponent>().AccountId = request.AccountId;
 				player.ClientSession = session;
 			}
 			reply();

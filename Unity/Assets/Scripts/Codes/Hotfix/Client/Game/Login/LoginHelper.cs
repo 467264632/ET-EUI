@@ -24,19 +24,28 @@ namespace ET.Client
                     await routerAddressComponent.Init();
                     clientScene.AddComponent<NetClientComponent, AddressFamily>(routerAddressComponent.RouterManagerIPAddress.AddressFamily);
                 }
-                IPEndPoint accountAddress = routerAddressComponent.GetAccountAddress(account);
+                IPEndPoint realmAddress = routerAddressComponent.GetRealmAddress(account);
+                R2C_GetAccountKey r2CGetAccountKey;
+                using (Session realmSession = await RouterHelper.CreateRouterSession(clientScene, realmAddress))
+                {
+                    r2CGetAccountKey = (R2C_GetAccountKey) await realmSession.Call(new C2R_GetAccountKey() { AccountName = account });
+                }
+                if (r2CGetAccountKey.Error != ErrorCode.ERR_Success)
+                {
+                    return r2CGetAccountKey.Error;
+                }
                 
                 password = MD5Helper.StringMD5(password);
 
-                Session accountSession = await RouterHelper.CreateRouterSession(clientScene, accountAddress);
-                A2C_LoginAccount a2CLoginAccount = (A2C_LoginAccount) await accountSession.Call(new C2A_LoginAccount() { AccountName = account, Password = password });
+                // 创建一个accountSession,并且保存到SessionComponent中
+                Session accountSession = await RouterHelper.CreateRouterSession(clientScene, NetworkHelper.ToIPEndPoint(r2CGetAccountKey.Address));
+                A2C_LoginAccount a2CLoginAccount = (A2C_LoginAccount) await accountSession.Call(new C2A_LoginAccount() { AccountKey = r2CGetAccountKey.AccountKey, AccountName = account, Password = password });
                 
                 if (a2CLoginAccount.Error != ErrorCode.ERR_Success)
                 {
                     return a2CLoginAccount.Error;
                 }
                 // 创建一个gate Session,并且保存到SessionComponent中
-                // Session accountSession = await RouterHelper.CreateRouterSession(clientScene, NetworkHelper.ToIPEndPoint(a2CLoginAccount.Address));
                 clientScene.AddComponent<SessionComponent>().Session = accountSession;
                 clientScene.GetComponent<AccountInfoComponent>().Token = a2CLoginAccount.Token;
                 clientScene.GetComponent<AccountInfoComponent>().AccountId = a2CLoginAccount.AccountId;
@@ -187,13 +196,13 @@ namespace ET.Client
             return ErrorCode.ERR_Success;
         }
         
-        public static async ETTask<int> GetRealmKey(Scene zoneScene)
+        public static async ETTask<int> GetGatemKey(Scene zoneScene)
         {
-            A2C_GetRealmKey a2CGetRealmKey = null;
+            A2C_GetGateKey a2C_GetGateKey = null;
 
             try
             {
-                  a2CGetRealmKey =(A2C_GetRealmKey) await zoneScene.GetComponent<SessionComponent>().Session.Call(new C2A_GetRealmKey()
+                a2C_GetGateKey =(A2C_GetGateKey) await zoneScene.GetComponent<SessionComponent>().Session.Call(new C2A_GetGateKey()
                 {
                     Token = zoneScene.GetComponent<AccountInfoComponent>().Token,
                     AccountId = zoneScene.GetComponent<AccountInfoComponent>().AccountId,
@@ -207,14 +216,14 @@ namespace ET.Client
                 return ErrorCode.ERR_NetWorkError;
             }
 
-            if (a2CGetRealmKey.Error != ErrorCode.ERR_Success)
+            if (a2C_GetGateKey.Error != ErrorCode.ERR_Success)
             {
-                Log.Error(a2CGetRealmKey.Error.ToString());
-                return a2CGetRealmKey.Error;
+                Log.Error(a2C_GetGateKey.Error.ToString());
+                return a2C_GetGateKey.Error;
             }
 
-            zoneScene.GetComponent<AccountInfoComponent>().RealmKey = a2CGetRealmKey.RealmKey;
-            zoneScene.GetComponent<AccountInfoComponent>().RealmAddress = a2CGetRealmKey.RealmAddress;
+            zoneScene.GetComponent<AccountInfoComponent>().GateKey = a2C_GetGateKey.GateKey;
+            zoneScene.GetComponent<AccountInfoComponent>().GateAddress = a2C_GetGateKey.GateAddress;
             zoneScene.GetComponent<SessionComponent>().Session.Dispose();
             await ETTask.CompletedTask;
             return ErrorCode.ERR_Success;
@@ -222,45 +231,47 @@ namespace ET.Client
         
        public static async ETTask<int> EnterGame(Scene zoneScene)
         {
-            string realmAddress = zoneScene.GetComponent<AccountInfoComponent>().RealmAddress;
-            // 1. 连接Realm，获取分配的Gate
-            R2C_LoginRealm r2CLoginRealm;
-            using (Session session = await RouterHelper.CreateRouterSession(zoneScene, NetworkHelper.ToIPEndPoint(realmAddress)))
-            {
-                try
-                {
-                    r2CLoginRealm = (R2C_LoginRealm) await session.Call(new C2R_LoginRealm() 
-                    {    
-                        AccountId =  zoneScene.GetComponent<AccountInfoComponent>().AccountId,
-                        RealmTokenKey = zoneScene.GetComponent<AccountInfoComponent>().RealmKey 
-                    });
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e);
-                    session?.Dispose();
-                    return ErrorCode.ERR_NetWorkError;
-                }
-                session?.Dispose();
-                
-                if (r2CLoginRealm.Error != ErrorCode.ERR_Success)
-                {
-                    return r2CLoginRealm.Error;
-                }
-            }
+            string gateAddress = zoneScene.GetComponent<AccountInfoComponent>().GateAddress;
+            string gateKey = zoneScene.GetComponent<AccountInfoComponent>().GateKey;
+            
+            // // 1. 连接Realm，获取分配的Gate
+            // R2C_LoginRealm r2CLoginRealm;
+            // using (Session session = await RouterHelper.CreateRouterSession(zoneScene, NetworkHelper.ToIPEndPoint(realmAddress)))
+            // {
+            //     try
+            //     {
+            //         r2CLoginRealm = (R2C_LoginRealm) await session.Call(new C2R_LoginRealm() 
+            //         {    
+            //             AccountId =  zoneScene.GetComponent<AccountInfoComponent>().AccountId,
+            //             RealmTokenKey = zoneScene.GetComponent<AccountInfoComponent>().RealmKey 
+            //         });
+            //     }
+            //     catch (Exception e)
+            //     {
+            //         Log.Error(e);
+            //         session?.Dispose();
+            //         return ErrorCode.ERR_NetWorkError;
+            //     }
+            //     session?.Dispose();
+            //     
+            //     if (r2CLoginRealm.Error != ErrorCode.ERR_Success)
+            //     {
+            //         return r2CLoginRealm.Error;
+            //     }
+            // }
     
             // 创建一个gate Session,并且保存到SessionComponent中
-            Session gateSession = await RouterHelper.CreateRouterSession(zoneScene, NetworkHelper.ToIPEndPoint(r2CLoginRealm.GateAddress));
+            Session gateSession = await RouterHelper.CreateRouterSession(zoneScene, NetworkHelper.ToIPEndPoint(gateAddress));
             zoneScene.GetComponent<SessionComponent>().Session = gateSession;
             
             
             // 2. 开始连接Gate
+            long accountId = zoneScene.GetComponent<AccountInfoComponent>().AccountId;
             long currentRoleId = zoneScene.GetComponent<RoleInfosComponent>().CurrentRoleId;
             G2C_LoginGameGate g2CLoginGate = null;
             try
             {
-                long accountId = zoneScene.GetComponent<AccountInfoComponent>().AccountId;
-                 g2CLoginGate = (G2C_LoginGameGate)await gateSession.Call(new C2G_LoginGameGate() { Key = r2CLoginRealm.GateSessionKey, Account = accountId,RoleId = currentRoleId});
+                 g2CLoginGate = (G2C_LoginGameGate)await gateSession.Call(new C2G_LoginGameGate() { Key = gateKey, AccountId = accountId,RoleId = currentRoleId});
                 
             }
             catch (Exception e)

@@ -408,13 +408,10 @@ namespace ET
 		public string Message { get; set; }
 
 		[ProtoMember(1)]
-		public string Address { get; set; }
+		public string Token { get; set; }
 
 		[ProtoMember(2)]
-		public long Key { get; set; }
-
-		[ProtoMember(3)]
-		public long GateId { get; set; }
+		public long AccountId { get; set; }
 
 	}
 
@@ -542,6 +539,40 @@ namespace ET
 
 	}
 
+	[ResponseType(nameof(R2C_GetAccountKey))]
+	[Message(OuterMessage.C2R_GetAccountKey)]
+	[ProtoContract]
+	public partial class C2R_GetAccountKey: Object, IRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public string AccountName { get; set; }
+
+	}
+
+	[Message(OuterMessage.R2C_GetAccountKey)]
+	[ProtoContract]
+	public partial class R2C_GetAccountKey: Object, IResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+		[ProtoMember(1)]
+		public long AccountKey { get; set; }
+
+		[ProtoMember(2)]
+		public string Address { get; set; }
+
+	}
+
 	[ResponseType(nameof(A2C_LoginAccount))]
 	[Message(OuterMessage.C2A_LoginAccount)]
 	[ProtoContract]
@@ -551,9 +582,12 @@ namespace ET
 		public int RpcId { get; set; }
 
 		[ProtoMember(1)]
-		public string AccountName { get; set; }
+		public long AccountKey { get; set; }
 
 		[ProtoMember(2)]
+		public string AccountName { get; set; }
+
+		[ProtoMember(3)]
 		public string Password { get; set; }
 
 	}
@@ -781,10 +815,10 @@ namespace ET
 
 	}
 
-	[ResponseType(nameof(A2C_GetRealmKey))]
-	[Message(OuterMessage.C2A_GetRealmKey)]
+	[ResponseType(nameof(A2C_GetGateKey))]
+	[Message(OuterMessage.C2A_GetGateKey)]
 	[ProtoContract]
-	public partial class C2A_GetRealmKey: Object, IRequest
+	public partial class C2A_GetGateKey: Object, IRequest
 	{
 		[ProtoMember(90)]
 		public int RpcId { get; set; }
@@ -800,9 +834,9 @@ namespace ET
 
 	}
 
-	[Message(OuterMessage.A2C_GetRealmKey)]
+	[Message(OuterMessage.A2C_GetGateKey)]
 	[ProtoContract]
-	public partial class A2C_GetRealmKey: Object, IResponse
+	public partial class A2C_GetGateKey: Object, IResponse
 	{
 		[ProtoMember(90)]
 		public int RpcId { get; set; }
@@ -814,44 +848,7 @@ namespace ET
 		public string Message { get; set; }
 
 		[ProtoMember(1)]
-		public string RealmKey { get; set; }
-
-		[ProtoMember(2)]
-		public string RealmAddress { get; set; }
-
-	}
-
-	[ResponseType(nameof(R2C_LoginRealm))]
-	[Message(OuterMessage.C2R_LoginRealm)]
-	[ProtoContract]
-	public partial class C2R_LoginRealm: Object, IRequest
-	{
-		[ProtoMember(90)]
-		public int RpcId { get; set; }
-
-		[ProtoMember(1)]
-		public long AccountId { get; set; }
-
-		[ProtoMember(2)]
-		public string RealmTokenKey { get; set; }
-
-	}
-
-	[Message(OuterMessage.R2C_LoginRealm)]
-	[ProtoContract]
-	public partial class R2C_LoginRealm: Object, IResponse
-	{
-		[ProtoMember(90)]
-		public int RpcId { get; set; }
-
-		[ProtoMember(91)]
-		public int Error { get; set; }
-
-		[ProtoMember(92)]
-		public string Message { get; set; }
-
-		[ProtoMember(1)]
-		public string GateSessionKey { get; set; }
+		public string GateKey { get; set; }
 
 		[ProtoMember(2)]
 		public string GateAddress { get; set; }
@@ -873,7 +870,7 @@ namespace ET
 		public long RoleId { get; set; }
 
 		[ProtoMember(3)]
-		public long Account { get; set; }
+		public long AccountId { get; set; }
 
 	}
 
@@ -1519,23 +1516,23 @@ namespace ET
 		 public const ushort M2C_TransferMap = 10033;
 		 public const ushort C2G_Benchmark = 10034;
 		 public const ushort G2C_Benchmark = 10035;
-		 public const ushort C2A_LoginAccount = 10036;
-		 public const ushort A2C_LoginAccount = 10037;
-		 public const ushort A2C_Disconnect = 10038;
-		 public const ushort ServerInfoProto = 10039;
-		 public const ushort C2A_GetServerInfos = 10040;
-		 public const ushort A2C_GetServerInfos = 10041;
-		 public const ushort RoleInfoProto = 10042;
-		 public const ushort C2A_CreateRole = 10043;
-		 public const ushort A2C_CreateRole = 10044;
-		 public const ushort C2A_GetRoles = 10045;
-		 public const ushort A2C_GetRoles = 10046;
-		 public const ushort C2A_DeleteRole = 10047;
-		 public const ushort A2C_DeleteRole = 10048;
-		 public const ushort C2A_GetRealmKey = 10049;
-		 public const ushort A2C_GetRealmKey = 10050;
-		 public const ushort C2R_LoginRealm = 10051;
-		 public const ushort R2C_LoginRealm = 10052;
+		 public const ushort C2R_GetAccountKey = 10036;
+		 public const ushort R2C_GetAccountKey = 10037;
+		 public const ushort C2A_LoginAccount = 10038;
+		 public const ushort A2C_LoginAccount = 10039;
+		 public const ushort A2C_Disconnect = 10040;
+		 public const ushort ServerInfoProto = 10041;
+		 public const ushort C2A_GetServerInfos = 10042;
+		 public const ushort A2C_GetServerInfos = 10043;
+		 public const ushort RoleInfoProto = 10044;
+		 public const ushort C2A_CreateRole = 10045;
+		 public const ushort A2C_CreateRole = 10046;
+		 public const ushort C2A_GetRoles = 10047;
+		 public const ushort A2C_GetRoles = 10048;
+		 public const ushort C2A_DeleteRole = 10049;
+		 public const ushort A2C_DeleteRole = 10050;
+		 public const ushort C2A_GetGateKey = 10051;
+		 public const ushort A2C_GetGateKey = 10052;
 		 public const ushort C2G_LoginGameGate = 10053;
 		 public const ushort G2C_LoginGameGate = 10054;
 		 public const ushort C2G_EnterGame = 10055;

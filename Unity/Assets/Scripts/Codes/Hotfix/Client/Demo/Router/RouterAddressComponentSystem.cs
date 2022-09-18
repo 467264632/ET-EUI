@@ -80,17 +80,5 @@ namespace ET.Client
             return new IPEndPoint(ipAddress, int.Parse(ss[1]));
         }
         
-        public static IPEndPoint GetAccountAddress(this RouterAddressComponent self, string account)
-        {
-            int v = account.Mode(self.Info.Realms.Count);
-            string address = self.Info.Realms[v];
-            string[] ss = address.Split(':');
-            IPAddress ipAddress = IPAddress.Parse(ss[0]);
-            //if (self.IPAddress.AddressFamily == AddressFamily.InterNetworkV6)
-            //{ 
-            //    ipAddress = ipAddress.MapToIPv6();
-            //}
-            return new IPEndPoint(ipAddress, int.Parse(ss[1]));
-        }
     }
 }

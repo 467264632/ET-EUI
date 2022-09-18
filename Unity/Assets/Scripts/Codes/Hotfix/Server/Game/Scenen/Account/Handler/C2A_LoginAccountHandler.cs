@@ -9,12 +9,6 @@ namespace ET.Server
     {
         protected override async ETTask Run(Session session, C2A_LoginAccount request, A2C_LoginAccount response, Action reply)
         {
-            if (session.DomainScene().SceneType != SceneType.Account)
-            {
-                Log.Error($"请求的Scene错误，当前Scene为：{session.DomainScene().SceneType}");
-                session.Dispose();
-                return;
-            }
             session.RemoveComponent<SessionAcceptTimeoutComponent>();
 
             if (session.GetComponent<SessionLockingComponent>() != null)
@@ -41,7 +35,7 @@ namespace ET.Server
                 session.Disconnect().Coroutine();
                 return;
             }
-   
+
             if (!Regex.IsMatch(request.Password.Trim(),@"^[A-Za-z0-9]+$"))
             {
                 response.Error = ErrorCode.ERR_PasswordFormError;
@@ -50,11 +44,16 @@ namespace ET.Server
                 return;
             }
 
-            if (session.GetComponent<AccountsZone>() == null)
+            string accountName = session.DomainScene().GetComponent<AccountSessionKeyComponent>().Get(request.AccountKey);
+            if (accountName == null)
             {
-                session.AddComponent<AccountsZone>();
+                response.Error = ErrorCode.ERR_GetAccountNameError;
+                reply();
+                session.Disconnect().Coroutine();
+                return;
             }
 
+            // string accountName = request.AccountName.Trim();
             if (session.GetComponent<RoleInfosZone>() == null)
             {
                 session.AddComponent<RoleInfosZone>();
@@ -62,14 +61,14 @@ namespace ET.Server
             
             using (session.AddComponent<SessionLockingComponent>())
             {
-                using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.LoginAccount,request.AccountName.Trim().GetHashCode()))
+                using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.LoginAccount,accountName.GetHashCode()))
                 {
-                    var accountInfoList = await DBManagerComponent.Instance.GetZoneDB(session.DomainZone()).Query<Account>(d=>d.AccountName.Equals(request.AccountName.Trim()));
+                    var accountInfoList = await DBManagerComponent.Instance.GetZoneDB(session.DomainZone()).Query<Account>(d=>d.AccountName.Equals(accountName));
                     Account account     = null;
                     if (accountInfoList!=null && accountInfoList.Count > 0)
                     {
                         account = accountInfoList[0];
-                        session.GetComponent<AccountsZone>().AddChild(account);
+                        // session.GetComponent<AccountsZone>().AddChild(account);
                         if (!account.Password.Equals(request.Password))
                         {
                             response.Error = ErrorCode.ERR_LoginPasswordError;
@@ -89,15 +88,15 @@ namespace ET.Server
                     }
                     else
                     {
-                        account             = session.GetComponent<AccountsZone>().AddChild<Account>();
-                        account.AccountName = request.AccountName.Trim();
+                        // account             = session.GetComponent<AccountsZone>().AddChild<Account>();
+                        account.AccountName = accountName;
                         account.Password    = request.Password;
                         account.CreateTime  = TimeHelper.ServerNow();
                         account.AccountType = (int)AccountType.General;
                         await DBManagerComponent.Instance.GetZoneDB(session.DomainZone()).Save<Account>(account);
                     }
 
-                    StartSceneConfig startSceneConfig = StartSceneConfigCategory.Instance.GetBySceneName(session.DomainZone(), "LoginCenter");
+                    StartSceneConfig startSceneConfig = GetSceneHelper.GetLoginCenter();
                     long loginCenterInstanceId = startSceneConfig.InstanceId;
                     var loginAccountResponse  = (L2A_LoginAccountResponse) await ActorMessageSenderComponent.Instance.Call(loginCenterInstanceId,new A2L_LoginAccountRequest(){AccountId = account.Id});
 
@@ -109,11 +108,19 @@ namespace ET.Server
                         account?.Dispose();
                         return;
                     }
+                    
+                    //将正在登录的其他账号踢下线
                     long accountSessionInstanceId = session.DomainScene().GetComponent<AccountSessionsComponent>().Get(account.Id);
-                    Session otherSession   = EventSystem.Instance.Get(accountSessionInstanceId) as Session;
-                    otherSession?.Send(new A2C_Disconnect(){Error = 0});
-                    otherSession?.Disconnect().Coroutine();
+                    using (Session otherSession   = EventSystem.Instance.Get(accountSessionInstanceId) as Session)
+                    {
+                        if (otherSession!=null && session.InstanceId != otherSession.InstanceId)
+                        {
+                            otherSession?.Send(new A2C_Disconnect(){Error = 0});
+                            otherSession?.Disconnect().Coroutine();
+                        }
+                    }
                     session.DomainScene().GetComponent<AccountSessionsComponent>().Add(account.Id,session.InstanceId);
+
                     session.AddComponent<AccountCheckOutTimeComponent, long>(account.Id);
 
                     string Token = TimeHelper.ServerNow().ToString() + RandomHelper.RandomNumber(int.MinValue, int.MaxValue).ToString();

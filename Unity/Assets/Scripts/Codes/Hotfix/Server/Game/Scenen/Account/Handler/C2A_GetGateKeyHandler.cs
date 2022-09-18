@@ -3,9 +3,9 @@ using System;
 namespace ET.Server
 {
     [MessageHandler(SceneType.Account)]
-    public class C2A_GetRealmKeyHandler : AMRpcHandler<C2A_GetRealmKey,A2C_GetRealmKey>
+    public class C2A_GetGateKeyHandler : AMRpcHandler<C2A_GetGateKey,A2C_GetGateKey>
     {
-        protected override async ETTask Run(Session session, C2A_GetRealmKey request, A2C_GetRealmKey response, Action reply)
+        protected override async ETTask Run(Session session, C2A_GetGateKey request, A2C_GetGateKey response, Action reply)
         {
             if (session.DomainScene().SceneType != SceneType.Account)
             {
@@ -36,9 +36,9 @@ namespace ET.Server
             {
                 using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.LoginAccount, request.AccountId))
                 {
-                    StartSceneConfig realmStartSceneConfig = GetSceneHelper.GetRealm(request.ServerId);
+                    StartSceneConfig gateStartSceneConfig = GetSceneHelper.GetGate(request.ServerId,request.AccountId);
 
-                    R2A_GetRealmKey r2AGetRealmKey =  (R2A_GetRealmKey) await MessageHelper.CallActor(realmStartSceneConfig.InstanceId, new A2R_GetRealmKey() { AccountId = request.AccountId });
+                    G2A_GetLoginGateKey r2AGetRealmKey =  (G2A_GetLoginGateKey) await MessageHelper.CallActor(gateStartSceneConfig.InstanceId, new A2G_GetLoginGateKey() { AccountId = request.AccountId });
 
                     if (r2AGetRealmKey.Error != ErrorCode.ERR_Success)
                     {
@@ -48,8 +48,9 @@ namespace ET.Server
                         return;
                     }
 
-                    response.RealmKey = r2AGetRealmKey.RealmKey;
-                    response.RealmAddress = realmStartSceneConfig.OuterIPPort.ToString();
+                    response.GateKey = r2AGetRealmKey.GateKey;
+                    response.GateAddress = gateStartSceneConfig.OuterIPPort.ToString();
+                    response.Error = ErrorCode.ERR_Success;
                     reply();
                     session?.Disconnect().Coroutine();
                 }

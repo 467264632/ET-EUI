@@ -14,7 +14,7 @@ namespace ET
 
         public StartSceneConfig LocationConfig;
 
-        public MultiMap<int, StartSceneConfig> Realms = new MultiMap<int, StartSceneConfig>();
+        public List<StartSceneConfig> Realms = new List<StartSceneConfig>();
         
         public List<StartSceneConfig> Routers = new List<StartSceneConfig>();
         
@@ -54,7 +54,7 @@ namespace ET
                 switch (startSceneConfig.Type)
                 {
                     case SceneType.Realm:
-                        this.Realms.Add(startSceneConfig.Zone, startSceneConfig);
+                        this.Realms.Add(startSceneConfig);
                         break;
                     case SceneType.Gate:
                         this.Gates.Add(startSceneConfig.Zone, startSceneConfig);

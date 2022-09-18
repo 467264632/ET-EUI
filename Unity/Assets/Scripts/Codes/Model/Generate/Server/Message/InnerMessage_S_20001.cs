@@ -415,22 +415,22 @@ namespace ET
 
 	}
 
-	[ResponseType(nameof(R2A_GetRealmKey))]
-	[Message(InnerMessage.A2R_GetRealmKey)]
+	[ResponseType(nameof(A2R_GetAccountKey))]
+	[Message(InnerMessage.R2A_GetAccountKey)]
 	[ProtoContract]
-	public partial class A2R_GetRealmKey: Object, IActorRequest
+	public partial class R2A_GetAccountKey: Object, IActorRequest
 	{
 		[ProtoMember(90)]
 		public int RpcId { get; set; }
 
 		[ProtoMember(1)]
-		public long AccountId { get; set; }
+		public string AccountName { get; set; }
 
 	}
 
-	[Message(InnerMessage.R2A_GetRealmKey)]
+	[Message(InnerMessage.A2R_GetAccountKey)]
 	[ProtoContract]
-	public partial class R2A_GetRealmKey: Object, IActorResponse
+	public partial class A2R_GetAccountKey: Object, IActorResponse
 	{
 		[ProtoMember(90)]
 		public int RpcId { get; set; }
@@ -442,14 +442,14 @@ namespace ET
 		public string Message { get; set; }
 
 		[ProtoMember(1)]
-		public string RealmKey { get; set; }
+		public long AccountKey { get; set; }
 
 	}
 
-	[ResponseType(nameof(G2R_GetLoginGateKey))]
-	[Message(InnerMessage.R2G_GetLoginGateKey)]
+	[ResponseType(nameof(G2A_GetLoginGateKey))]
+	[Message(InnerMessage.A2G_GetLoginGateKey)]
 	[ProtoContract]
-	public partial class R2G_GetLoginGateKey: Object, IActorRequest
+	public partial class A2G_GetLoginGateKey: Object, IActorRequest
 	{
 		[ProtoMember(90)]
 		public int RpcId { get; set; }
@@ -459,9 +459,9 @@ namespace ET
 
 	}
 
-	[Message(InnerMessage.G2R_GetLoginGateKey)]
+	[Message(InnerMessage.G2A_GetLoginGateKey)]
 	[ProtoContract]
-	public partial class G2R_GetLoginGateKey: Object, IActorResponse
+	public partial class G2A_GetLoginGateKey: Object, IActorResponse
 	{
 		[ProtoMember(90)]
 		public int RpcId { get; set; }
@@ -473,7 +473,7 @@ namespace ET
 		public string Message { get; set; }
 
 		[ProtoMember(1)]
-		public string GateSessionKey { get; set; }
+		public string GateKey { get; set; }
 
 	}
 
@@ -795,10 +795,10 @@ namespace ET
 		 public const ushort L2A_LoginAccountResponse = 20026;
 		 public const ushort L2G_DisconnectGateUnit = 20027;
 		 public const ushort G2L_DisconnectGateUnit = 20028;
-		 public const ushort A2R_GetRealmKey = 20029;
-		 public const ushort R2A_GetRealmKey = 20030;
-		 public const ushort R2G_GetLoginGateKey = 20031;
-		 public const ushort G2R_GetLoginGateKey = 20032;
+		 public const ushort R2A_GetAccountKey = 20029;
+		 public const ushort A2R_GetAccountKey = 20030;
+		 public const ushort A2G_GetLoginGateKey = 20031;
+		 public const ushort G2A_GetLoginGateKey = 20032;
 		 public const ushort G2L_AddLoginRecord = 20033;
 		 public const ushort L2G_AddLoginRecord = 20034;
 		 public const ushort G2M_RequestEnterGameState = 20035;

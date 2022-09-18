@@ -9,7 +9,6 @@ namespace ET.Server
     }
     
     [ComponentOf(typeof(Scene))]
-    [ChildOf(typeof(AccountsZone))]
     public class Account: Entity, IAwake
     {
         public string AccountName;      //账号

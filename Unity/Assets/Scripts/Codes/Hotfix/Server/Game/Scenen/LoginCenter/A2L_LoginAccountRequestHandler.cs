@@ -11,18 +11,18 @@ namespace ET.Server
 
             using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.LoginCenterLock,accountId.GetHashCode()))
             {
-                if (!scene.GetComponent<LoginInfoRecordComponent>().IsExist(accountId))
+                if (scene.GetComponent<LoginInfoRecordComponent>().IsExist(accountId))
                 {
+                    int zone = scene.GetComponent<LoginInfoRecordComponent>().Get(accountId);
+                    StartSceneConfig gateConfig = GetSceneHelper.GetGate(zone,accountId);
+                
+                    var g2LDisconnectGateUnit = (G2L_DisconnectGateUnit) await MessageHelper.CallActor(gateConfig.InstanceId, new L2G_DisconnectGateUnit() { AccountId = accountId });
+
+                    response.Error = g2LDisconnectGateUnit.Error;
                     reply();
                     return;
                 }
-
-                int zone = scene.GetComponent<LoginInfoRecordComponent>().Get(accountId);
-                StartSceneConfig gateConfig = GetSceneHelper.GetGate(zone);
                 
-                var g2LDisconnectGateUnit = (G2L_DisconnectGateUnit) await MessageHelper.CallActor(gateConfig.InstanceId, new L2G_DisconnectGateUnit() { AccountId = accountId });
-
-                response.Error = g2LDisconnectGateUnit.Error;
                 reply();
             }
         }

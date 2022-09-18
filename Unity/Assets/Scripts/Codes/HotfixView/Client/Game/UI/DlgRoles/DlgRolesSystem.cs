@@ -116,7 +116,7 @@ namespace ET.Client
 			
 			try
 			{
-				int errorCode = await LoginHelper.GetRealmKey(self.ClientScene());
+				int errorCode = await LoginHelper.GetGatemKey(self.ClientScene());
 				if (errorCode != ErrorCode.ERR_Success)
 				{
 					Log.Error(errorCode.ToString());
