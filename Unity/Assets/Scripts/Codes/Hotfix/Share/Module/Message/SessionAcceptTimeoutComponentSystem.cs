@@ -23,7 +23,7 @@ namespace ET
     {
         protected override void Awake(SessionAcceptTimeoutComponent self)
         {
-            self.Timer = TimerComponent.Instance.NewOnceTimer(TimeHelper.ServerNow() + 5000, TimerCallbackId.SessionAcceptTimeout, self);
+            self.Timer = TimerComponent.Instance.NewOnceTimer(TimeHelper.ServerNow() + 25000, TimerCallbackId.SessionAcceptTimeout, self);
         }
     }
 

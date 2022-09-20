@@ -9,6 +9,12 @@ namespace ET.Server
     {
         protected override async ETTask Run(Session session, C2A_LoginAccount request, A2C_LoginAccount response, Action reply)
         {
+            if (session.DomainScene().SceneType != SceneType.Account)
+            {
+                Log.Error($"请求的Scene错误，当前Scene为：{session.DomainScene().SceneType}");
+                session.Dispose();
+                return;
+            }
             session.RemoveComponent<SessionAcceptTimeoutComponent>();
 
             if (session.GetComponent<SessionLockingComponent>() != null)
@@ -19,8 +25,11 @@ namespace ET.Server
                 return;
             }
             
+            string accountName = session.DomainScene().GetComponent<AccountSessionKeyComponent>().Get(request.AccountKey);
+            string password = request.Password.Trim();
+            long accountKey = request.AccountKey;
 
-            if (string.IsNullOrEmpty(request.AccountName) || string.IsNullOrEmpty(request.Password))
+            if (string.IsNullOrEmpty(accountName) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(accountKey.ToString()))
             {
                 response.Error = ErrorCode.ERR_LoginInfoIsNull;
                 reply();
@@ -28,15 +37,15 @@ namespace ET.Server
                 return;
             }
 
-            if (!Regex.IsMatch(request.AccountName.Trim(),@"^(?=.*[0-9].*)(?=.*[A-Z].*)(?=.*[a-z].*).{6,15}$"))
-            {
-                response.Error = ErrorCode.ERR_AccountNameFormError;
-                reply();
-                session.Disconnect().Coroutine();
-                return;
-            }
+            // if (!Regex.IsMatch(request.AccountName.Trim(),@"^(?=.*[0-9].*)(?=.*[A-Z].*)(?=.*[a-z].*).{6,15}$"))
+            // {
+            //     response.Error = ErrorCode.ERR_AccountNameFormError;
+            //     reply();
+            //     session.Disconnect().Coroutine();
+            //     return;
+            // }
 
-            if (!Regex.IsMatch(request.Password.Trim(),@"^[A-Za-z0-9]+$"))
+            if (!Regex.IsMatch(password,@"^[A-Za-z0-9]+$"))
             {
                 response.Error = ErrorCode.ERR_PasswordFormError;
                 reply();
@@ -44,15 +53,14 @@ namespace ET.Server
                 return;
             }
 
-            string accountName = session.DomainScene().GetComponent<AccountSessionKeyComponent>().Get(request.AccountKey);
-            if (accountName == null)
+            if (accountName!=request.AccountName)
             {
                 response.Error = ErrorCode.ERR_GetAccountNameError;
                 reply();
                 session.Disconnect().Coroutine();
                 return;
             }
-
+            session.DomainScene().GetComponent<AccountSessionKeyComponent>().Remove(accountKey);
             // string accountName = request.AccountName.Trim();
             if (session.GetComponent<RoleInfosZone>() == null)
             {
@@ -69,7 +77,7 @@ namespace ET.Server
                     {
                         account = accountInfoList[0];
                         // session.GetComponent<AccountsZone>().AddChild(account);
-                        if (!account.Password.Equals(request.Password))
+                        if (!account.Password.Equals(password))
                         {
                             response.Error = ErrorCode.ERR_LoginPasswordError;
                             reply();
@@ -90,7 +98,7 @@ namespace ET.Server
                     {
                         // account             = session.GetComponent<AccountsZone>().AddChild<Account>();
                         account.AccountName = accountName;
-                        account.Password    = request.Password;
+                        account.Password    = password;
                         account.CreateTime  = TimeHelper.ServerNow();
                         account.AccountType = (int)AccountType.General;
                         await DBManagerComponent.Instance.GetZoneDB(session.DomainZone()).Save<Account>(account);
@@ -115,7 +123,7 @@ namespace ET.Server
                     {
                         if (otherSession!=null && session.InstanceId != otherSession.InstanceId)
                         {
-                            otherSession?.Send(new A2C_Disconnect(){Error = 0});
+                            otherSession?.Send(new A2C_Disconnect(){Error = ErrorCode.ERR_OtherLoginAccount});
                             otherSession?.Disconnect().Coroutine();
                         }
                     }

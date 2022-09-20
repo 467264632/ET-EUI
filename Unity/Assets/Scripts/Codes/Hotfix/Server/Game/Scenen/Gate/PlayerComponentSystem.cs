@@ -17,6 +17,7 @@ namespace ET.Server
         {
             protected override void Destroy(PlayerComponent self)
             {
+                self.idPlayers.Clear();
             }
         }
         

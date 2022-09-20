@@ -21,9 +21,9 @@ namespace ET.Client
             Unit unit = UnitFactory.Create(currentScene, m2CCreateMyUnit.Unit);
             unitComponent.Add(unit);
             
-            clientScene.RemoveComponent<AIComponent>();
+            // clientScene.RemoveComponent<AIComponent>();
             
-            // EventSystem.Instance.PublishAsync(currentScene, new EventType.SceneChangeFinish(){ZoneScene = clientScene, CurrentScene = currentScene}).Coroutine();
+            EventSystem.Instance.PublishAsync(currentScene, new EventType.SceneChangeFinish(){ZoneScene = clientScene, CurrentScene = currentScene}).Coroutine();
 
             // 通知等待场景切换的协程
             clientScene.GetComponent<ObjectWait>().Notify(new Wait_SceneChangeFinish());

@@ -14,22 +14,15 @@ namespace ET.Server
     {
         public static string Get(this AccountSessionKeyComponent self, long key)
         {
-            if (!self.accountSessionKeyDcit.TryGetValue(key,out string AccountName))
-            {
-                return null;
-            }
-
+            string AccountName = null;
+            self.accountSessionKeyDcit.TryGetValue(key, out AccountName);
             return AccountName;
         }
 
         public static void Add(this AccountSessionKeyComponent self, long key, string AccountName)
         {
-            if (self.accountSessionKeyDcit.ContainsKey(key))
-            {
-                self.accountSessionKeyDcit[key] = AccountName;
-                return;
-            }
             self.accountSessionKeyDcit.Add(key,AccountName);
+            self.TimeOutRemoveKey(key,AccountName).Coroutine();
         }
 
 
@@ -41,5 +34,17 @@ namespace ET.Server
             }
         }
 
+        private static async ETTask TimeOutRemoveKey(this AccountSessionKeyComponent self, long key, string AccountName)
+        {
+            await TimerComponent.Instance.WaitAsync(6000);
+
+            string onlineAccountName = self.Get(key);
+
+            if (!string.IsNullOrEmpty(onlineAccountName) && onlineAccountName == AccountName)
+            {
+                self.Remove(key);
+            }
+
+        }
     }
 }

@@ -102,7 +102,9 @@ namespace ET
         public const int ERR_ChatMessageEmpty  = 200052;
         
         public const int ERR_GetAccountNameError  = 200053;
-        
-        
+        public const int ERR_OtherLoginAccount  = 200054;
+        public const int ERR_AccountCheckOutTime = 200055;
+
+
     }
 }

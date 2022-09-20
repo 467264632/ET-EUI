@@ -35,8 +35,9 @@ namespace ET.Server
                 return;
             }
 
-            Player player = EventSystem.Instance.Get(sessionPlayerComponent.PlayerInstanceId) as Player;
-
+            // Player player = EventSystem.Instance.Get(sessionPlayerComponent.PlayerInstanceId) as Player;
+            Player player = session.GetComponent<SessionPlayerComponent>().GetMyPlayer();
+            
             if (player == null || player.IsDisposed)
             {
                 response.Error = ErrorCode.ERR_NonePlayerError;
@@ -103,8 +104,8 @@ namespace ET.Server
                         //从数据库或者缓存中加载出Unit实体及其相关组件
                         (bool isNewPlayer, Unit unit) = await UnitHelper.LoadUnit(player);
 
-                        //unit.AddComponent<UnitGateComponent, long>(session.InstanceId);
-                        unit.AddComponent<UnitGateComponent, long>(player.InstanceId);
+                        unit.AddComponent<UnitGateComponent, long>(session.InstanceId);
+                        // unit.AddComponent<UnitGateComponent, long>(player.InstanceId);
 
                         // player.ChatInfoInstanceId = await this.EnterWorldChatServer(unit); //登录聊天服
 
@@ -113,10 +114,8 @@ namespace ET.Server
                         response.MyId = unit.Id;
                         reply();
 
-                        StartSceneConfig startSceneConfig = StartSceneConfigCategory.Instance.GetBySceneName(session.DomainZone(), "Game");
+                        StartSceneConfig startSceneConfig = StartSceneConfigCategory.Instance.GetBySceneName(unit.DomainZone(), "Game");
                         await TransferHelper.Transfer(unit, startSceneConfig.InstanceId, startSceneConfig.Name);
-
-
 
                         SessionStateComponent SessionStateComponent = session.GetComponent<SessionStateComponent>();
                         if (SessionStateComponent == null)

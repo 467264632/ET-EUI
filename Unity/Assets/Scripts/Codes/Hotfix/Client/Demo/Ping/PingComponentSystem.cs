@@ -36,7 +36,8 @@ namespace ET.Client
                     self.Ping = time2 - time1;
                     
                     TimeInfo.Instance.ServerMinusClientTime = response.Time + (time2 - time1) / 2 - time2;
-                    // Log.Debug((response.Time + (time2 - time1) / 2 - time2).ToString());
+                    Log.Debug(self.Ping.ToString());
+                    Log.Debug((response.Time + (time2 - time1) / 2 - time2).ToString());
 
                     await TimerComponent.Instance.WaitAsync(2000);
                 }

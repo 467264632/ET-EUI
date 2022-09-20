@@ -36,14 +36,16 @@ namespace ET.Server
             }
 
             int indexOf = queryUnit.ComponentNameList.IndexOf(nameof (Unit));
-            Unit unit = queryUnit.EntityList[indexOf] as Unit;
+            
+            Unit unit = MongoHelper.FromBson<Entity>(queryUnit.EntityList[indexOf]) as Unit;
             if (unit == null)
             {
                 return null;
             }
             scene.GetComponent<UnitComponent>().AddChild(unit);
-            foreach (Entity entity in queryUnit.EntityList)
+            foreach (var binaryEntity in queryUnit.EntityList)
             {
+                Entity entity = MongoHelper.FromBson<Entity>(binaryEntity);
                 if (entity == null || entity is Unit)
                 {
                     continue;

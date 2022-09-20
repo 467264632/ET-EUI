@@ -86,7 +86,10 @@ namespace ET.Server
                 return;
             }
             Unit unit = self.GetParent<Unit>();
-            Log.Error((unit == null).ToString());
+            if (unit == null)
+            {
+                Log.Error($"UnitDBSaveComponent SaveChange:unit = null");
+            }
             Other2UnitCache_AddOrUpdateUnit message = new Other2UnitCache_AddOrUpdateUnit() { UnitId = unit.Id, };
             message.EntityTypes.Add(unit.GetType().FullName);
             message.EntityBytes.Add(MongoHelper.ToBson(unit));

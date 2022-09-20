@@ -655,10 +655,10 @@ namespace ET
 		[ProtoMember(92)]
 		public string Message { get; set; }
 
-		[ProtoMember(4)]
-		public List<Entity> EntityList = new List<Entity>();
+		[ProtoMember(1)]
+		public List<byte[]> EntityList = new List<byte[]>();
 
-		[ProtoMember(5)]
+		[ProtoMember(2)]
 		public List<string> ComponentNameList = new List<string>();
 
 	}

@@ -31,7 +31,7 @@ namespace ET.Server
 			
             // 通知客户端创建My Unit
             M2C_CreateMyUnit m2CCreateUnits = new M2C_CreateMyUnit();
-            m2CCreateUnits.Unit = Server.UnitHelper.CreateUnitInfo(unit);
+            m2CCreateUnits.Unit = UnitHelper.CreateUnitInfo(unit);
             MessageHelper.SendToClient(unit, m2CCreateUnits);
 			
             // //通知客户端同步背包信息

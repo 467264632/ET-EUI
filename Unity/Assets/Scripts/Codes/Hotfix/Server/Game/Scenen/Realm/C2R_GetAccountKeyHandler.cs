@@ -16,7 +16,8 @@ namespace ET.Server
 				return;
 			}
 
-			if (string.IsNullOrEmpty(request.AccountName))
+			string accountName = request.AccountName.Trim();
+			if (string.IsNullOrEmpty(accountName))
 			{
 				response.Error = ErrorCode.ERR_LoginInfoIsNull;
 				reply();
@@ -24,7 +25,7 @@ namespace ET.Server
 				return;
 			}
 			
-			if (!Regex.IsMatch(request.AccountName.Trim(),@"^(?=.*[0-9].*)(?=.*[A-Z].*)(?=.*[a-z].*).{6,15}$"))
+			if (!Regex.IsMatch(accountName,@"^(?=.*[0-9].*)(?=.*[A-Z].*)(?=.*[a-z].*).{6,15}$"))
 			{
 				response.Error = ErrorCode.ERR_AccountNameFormError;
 				reply();
@@ -34,7 +35,6 @@ namespace ET.Server
 			
 			using (session.AddComponent<SessionLockingComponent>())
 			{
-				string accountName = request.AccountName.Trim();
 				// 随机分配一个Account
 				StartSceneConfig config = GetSceneHelper.GetAccount(accountName);
 			

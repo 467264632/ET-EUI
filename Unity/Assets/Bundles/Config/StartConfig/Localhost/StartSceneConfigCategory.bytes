@@ -4,16 +4,19 @@
 "Gate*Gate10”N
 "Gate*Gate20•N
 "Location*Location
-"Map*Map1
-"Map*Map2
-"Map*Map3
-	"Account*Account10–N
+"Map*Game
+"Map*
+Adventure1
+"Map*
+Adventure2
+	"Map*
+Adventure3
 
-"Account*Account20—N
-"Account*Account30˜N
- "LoginCenter*LoginCenter
-"	UnitCache*	UnitCache
-"Map*Game
+"Account*Account10–N
+"Account*Account20—N
+"Account*Account30˜N
+ "LoginCenter*LoginCenter
+"	UnitCache*	UnitCache
 "Rank*Rank
 "ChatInfo*ChatInfo
 È"Robot*Robot01

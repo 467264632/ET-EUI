@@ -35,11 +35,11 @@ namespace ET.Client
                     return r2CGetAccountKey.Error;
                 }
                 
-                password = MD5Helper.StringMD5(password);
+                string encPassword = MD5Helper.StringMD5(password);
 
                 // 创建一个accountSession,并且保存到SessionComponent中
                 Session accountSession = await RouterHelper.CreateRouterSession(clientScene, NetworkHelper.ToIPEndPoint(r2CGetAccountKey.Address));
-                A2C_LoginAccount a2CLoginAccount = (A2C_LoginAccount) await accountSession.Call(new C2A_LoginAccount() { AccountKey = r2CGetAccountKey.AccountKey, AccountName = account, Password = password });
+                A2C_LoginAccount a2CLoginAccount = (A2C_LoginAccount) await accountSession.Call(new C2A_LoginAccount() { AccountKey = r2CGetAccountKey.AccountKey, AccountName = account, Password = encPassword });
                 
                 if (a2CLoginAccount.Error != ErrorCode.ERR_Success)
                 {
@@ -263,6 +263,7 @@ namespace ET.Client
             // 创建一个gate Session,并且保存到SessionComponent中
             Session gateSession = await RouterHelper.CreateRouterSession(zoneScene, NetworkHelper.ToIPEndPoint(gateAddress));
             zoneScene.GetComponent<SessionComponent>().Session = gateSession;
+            
             
             
             // 2. 开始连接Gate

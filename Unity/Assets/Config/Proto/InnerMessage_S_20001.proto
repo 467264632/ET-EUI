@@ -340,9 +340,8 @@ message UnitCache2Other_GetUnit //IActorResponse
 	int32 RpcId = 90;
 	int32 Error = 91;
 	string Message = 92;
-
-	repeated Entity EntityList = 4;
-	repeated string ComponentNameList = 5;
+	repeated bytes EntityList = 1;
+	repeated string ComponentNameList = 2;
 }
 
 

@@ -4,11 +4,6 @@ namespace ET.Server
 {
     public static class SceneFactory
     {
-        public static async ETTask<Scene> Create(Entity parent, string name, SceneType sceneType)
-        {
-            long instanceId = IdGenerater.Instance.GenerateInstanceId();
-            return await CreateServerScene(parent, instanceId, instanceId, parent.DomainZone(), name, sceneType);
-        }
         public static async ETTask<Scene> CreateServerScene(Entity parent, long id, long instanceId, int zone, string name, SceneType sceneType, StartSceneConfig startSceneConfig = null)
         {
             await ETTask.CompletedTask;
@@ -28,7 +23,7 @@ namespace ET.Server
                     break;
                 case SceneType.Realm:
                     scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.InnerIPOutPort);
-                    scene.AddComponent<TokenComponent>();
+                    // scene.AddComponent<TokenComponent>();
                     break;
                 case SceneType.Gate:
                     scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.InnerIPOutPort);
@@ -54,13 +49,13 @@ namespace ET.Server
                     break;
                 case SceneType.Account:
                     scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.InnerIPOutPort);
-                    scene.AddComponent<TokenComponent>();
-                    scene.AddComponent<AccountSessionsComponent>();
+                    scene.AddComponent<TokenComponent>();//记录accountId与Token
+                    scene.AddComponent<AccountSessionsComponent>();//记录accountId与SessionInstanceId
                     scene.AddComponent<AccountSessionKeyComponent>();//C2R_GetAccountKey 记录账号被分配到哪个Account
                     scene.AddComponent<ServerInfoManagerComponent>();
                     break;
                 case SceneType.LoginCenter:
-                    scene.AddComponent<LoginInfoRecordComponent>();
+                    scene.AddComponent<LoginInfoRecordComponent>();//记录登录成功进入gate的accountId与zone
                     break;
                 case SceneType.UnitCache:
                     scene.AddComponent<UnitCacheComponent>();

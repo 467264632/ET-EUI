@@ -7,6 +7,7 @@ namespace ET
     public partial class StartSceneConfigCategory
     {
         public MultiMap<int, StartSceneConfig> Gates = new MultiMap<int, StartSceneConfig>();
+        public MultiMap<int, StartSceneConfig> Games = new MultiMap<int, StartSceneConfig>();
         
         public MultiMap<int, StartSceneConfig> ProcessScenes = new MultiMap<int, StartSceneConfig>();
         
@@ -58,6 +59,9 @@ namespace ET
                         break;
                     case SceneType.Gate:
                         this.Gates.Add(startSceneConfig.Zone, startSceneConfig);
+                        break;
+                    case SceneType.Map:
+                        this.Games.Add(startSceneConfig.Zone, startSceneConfig);
                         break;
                     case SceneType.Location:
                         this.LocationConfig = startSceneConfig;

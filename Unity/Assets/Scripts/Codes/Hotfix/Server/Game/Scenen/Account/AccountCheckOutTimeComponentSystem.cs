@@ -49,7 +49,7 @@ namespace ET.Server
             {
                 session.DomainScene().GetComponent<AccountSessionsComponent>().Remove(self.AccountId);
             }
-            session?.Send(new A2C_Disconnect(){Error = 1});
+            session?.Send(new A2C_Disconnect(){Error = ErrorCode.ERR_AccountCheckOutTime});
             session?.Disconnect().Coroutine();
         }
 
